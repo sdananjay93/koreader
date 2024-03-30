@@ -10,17 +10,34 @@ This is a debug plugin to test Plugin functionality.
 --     return { disabled = true, }
 -- end
 
-local Dispatcher = require("dispatcher") -- luacheck:ignore
-local InfoMessage = require("ui/widget/infomessage")
-local Notification = require("ui/widget/notification")
-local UIManager = require("ui/uimanager")
+local BD = require("ui/bidi")
+local Blitbuffer = require("ffi/blitbuffer")
+local BottomContainer = require("ui/widget/container/bottomcontainer")
+local CenterContainer = require("ui/widget/container/centercontainer")
+local Device = require("device")
 local Event = require("ui/event")
+local Font = require("ui/font")
+local FrameContainer = require("ui/widget/container/framecontainer")
+local Geom = require("ui/geometry")
+local HorizontalGroup = require("ui/widget/horizontalgroup")
+local HorizontalSpan = require("ui/widget/horizontalspan")
+local LeftContainer = require("ui/widget/container/leftcontainer")
+local LineWidget = require("ui/widget/linewidget")
+local MultiInputDialog = require("ui/widget/multiinputdialog")
+local ProgressWidget = require("ui/widget/progresswidget")
+local RightContainer = require("ui/widget/container/rightcontainer")
+local Size = require("ui/size")
+local TextWidget = require("ui/widget/textwidget")
+local UIManager = require("ui/uimanager")
+local VerticalGroup = require("ui/widget/verticalgroup")
+local VerticalSpan = require("ui/widget/verticalspan")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
-local _ = require("gettext")
-local DataStorage = require("datastorage")
-local LuaSettings = require("luasettings")
+local datetime = require("datetime")
 local logger = require("logger")
-local ReaderFooter = require("apps.reader.modules.readerfooter")
+local T = require("ffi/util").template
+local _ = require("gettext")
+local C_ = _.pgettext
+local Screen = Device.screen
 
 local BetterBar = WidgetContainer:extend {
     name = "BetterBar",
@@ -33,12 +50,6 @@ local BetterBar = WidgetContainer:extend {
 local about_bar = "This is an alternative to the bottom Footer. " ..
     "Enabling this will disable the Built-in footer. " ..
     "Disabling this, will restore the original footer settings"
-
-orig_settings_to_update = {
-    "page_progress",
-    "pages_left_book",
-    "time",
-}
 
 -- function BetterBar:onDispatcherRegisterActions()
 --     Dispatcher:registerAction("helloworld_action",
@@ -107,6 +118,23 @@ function BetterBar:notify(msg, notif_type)
         }
     end
     return UIManager:show(popup)
+end
+
+function BetterBar:updateFooterContainer()
+    self.vertical_frame = VerticalGroup:new {}
+    -- Draw Horizontal Separator Line
+    self.separator_line = LineWidget:new {
+        dimen = Geom:new {
+            w = 0,
+            h = Size.line.medium
+        }
+    }
+    self.footer_container = CenterContainer:new {
+        -- Container Height = 15
+        dimen = Geom:new { w = 0, h = 15 },
+        self.
+    }
+
 end
 
 function BetterBar:onCloseDocument()
